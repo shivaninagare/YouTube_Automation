@@ -42,14 +42,19 @@ public class TestCases extends ExcelDataProvider { // Lets us read the data
         @Test
         public static void testCase01() throws InterruptedException{
         driver.get("https://www.youtube.com/");
+        
         Thread.sleep(3000);
         String currentURL= driver.getCurrentUrl();
-        Assert.assertEquals(currentURL,"https://www.youtube.com/","The URL is not\r\n" + //
-                                "        correct");
+        Assert.assertEquals(currentURL,"https://www.youtube.com/","URL is not correct");
         Wrappers.clickOnElement(driver,By.xpath("//a[text()='About']"));
-        Thread.sleep(1000);
-        System.out.println("clicked on element");
 
+        Thread.sleep(1000);
+        String aboutPageURL = driver.getCurrentUrl();
+        Assert.assertTrue(aboutPageURL.contains("about"), "Failed to navigate to the About page.");
+        System.out.println("clicked on element");
+        WebElement header = driver.findElement(By.xpath("//h1[normalize-space(text())='About YouTube']"));
+        String text = header.getText();
+        System.out.println(text);
         List<WebElement> aboutText =
         driver.findElements(By.xpath("//p[contains(@class,'lb-font-color-text-primary')]"));
         for(WebElement element: aboutText){
@@ -196,6 +201,21 @@ public class TestCases extends ExcelDataProvider { // Lets us read the data
                 System.out.println("Total likes for the first three news posts: " + totalLikes);
         }
 
+        @Test(dataProvider = "excelData", dataProviderClass = ExcelDataProvider.class)
+        public static void testCase05(String name) throws InterruptedException{
+                
+               
+                        driver.get("https://www.youtube.com/");
+                        Thread.sleep(3000);
+                        
+                        WebElement searchBox = driver.findElement(By.xpath("//input[@id=\"search\"]"));
+                        searchBox.clear();
+                        searchBox.sendKeys(name);
+                        searchBox.submit();
+                        Thread.sleep(3000);
+
+                
+        }
         @BeforeTest
         public void startBrowser() {
                 System.setProperty("java.util.logging.config.file", "logging.properties");
@@ -217,6 +237,7 @@ public class TestCases extends ExcelDataProvider { // Lets us read the data
 
                 driver.manage().window().maximize();
         }
+        
 
         // @AfterTest
         // public void endTest() {
